@@ -1,15 +1,40 @@
 {
-  "pluginAlias": "ExampleHomebridgePlugin",
+  "pluginAlias": "NatureRemoMultifunctionLight",
   "pluginType": "platform",
   "singular": true,
   "schema": {
     "type": "object",
     "properties": {
-      "name": {
+       "name": {
         "title": "Name",
         "type": "string",
-        "required": true,
-        "default": "Example Dynamic Platform"
+        "default": "Nature Remo Multifunction Light",
+        "required": true
+      },
+      "accessToken": {
+        "title": "Access token",
+        "type": "string",
+        "required": true
+      },
+      "signalOnOff": {
+        "title": "Signal for On/Off",
+        "type": "string",
+        "required": true
+      },
+      "signalPoint": {
+        "title": "Signal for Lighting point",
+        "type": "string",
+        "required": true
+      },
+      "signalColor": {
+        "title": "Signal for Color temperature",
+        "type": "string",
+        "required": true
+      },
+      "signalBrightness": {
+        "title": "Signal for Brightness",
+        "type": "string",
+        "required": true
       }
     }
   }
