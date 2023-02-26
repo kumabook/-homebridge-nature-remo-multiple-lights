@@ -35,7 +35,7 @@ interface LightbulbState {
   colorTemperature: number
 }
 
-function signal2Id(signal: Signal, config: any): string | undefined {
+function signal2Id(signal: Signal, config: LightbulbState): string | undefined {
   switch (signal) {
     case 'on/off':
       return config.signalOnOff
@@ -79,7 +79,7 @@ export class NatureRemoMultifunctionLightHomebridgePlatform implements DynamicPl
   private brightnessTask?: Promise<void>
   private colorTemperatureTask?: Promise<void>
 
-  private configPath: string = `${this.api.user.storagePath()}/nature-remo-multifunction-light-state.json`
+  private configPath = `${this.api.user.storagePath()}/nature-remo-multifunction-light-state.json`
 
   constructor(
     public readonly log: Logger,
@@ -151,7 +151,7 @@ export class NatureRemoMultifunctionLightHomebridgePlatform implements DynamicPl
   }
 
   requestSignal(signal: Signal) {
-    let signalId = signal2Id(signal, this.config)
+    const signalId = signal2Id(signal, this.config)
     return Axios.post(`/signals/${signalId}/send`, null, {
       baseURL: 'https://api.nature.global/1/',
       headers: {
@@ -286,7 +286,7 @@ export class NatureRemoMultifunctionLightHomebridgePlatform implements DynamicPl
     if (this.brightnessTask) {
       return;
     }
-    this.brightnessTask = new Promise<void>(async (resolve, reject) => {
+    this.brightnessTask = (async (resolve, reject) => {
       try {
         await sleep(1);
         if (this.targetBrightnessLevel == this.state.brightnessLevel) {
@@ -303,14 +303,14 @@ export class NatureRemoMultifunctionLightHomebridgePlatform implements DynamicPl
       } catch (e) {
         reject(e);
       }
-    });
+    })();
   }
 
   async startTemperatureTaskIfNeeded() {
     if (this.colorTemperatureTask) {
       return;
     }
-    this.colorTemperatureTask = new Promise<void>(async (resolve, reject) => {
+    this.colorTemperatureTask = (async (resolve, reject) => {
       try {
         await sleep(1);
         if (this.targetColorTemperatureLevel == this.state.colorTemperatureLevel) {
@@ -327,7 +327,7 @@ export class NatureRemoMultifunctionLightHomebridgePlatform implements DynamicPl
       } catch (e) {
         reject(e);
       }
-    });
+    })();
   }
 
   async nextBrightnessLevel() {
