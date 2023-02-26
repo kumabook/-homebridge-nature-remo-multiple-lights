@@ -1,7 +1,7 @@
 {
   "private": true,
   "displayName": "Nature Remo Multifunction Light",
-  "name": "homebridge-plugin-nature-remo-multifunction-light",
+  "name": "kumabook-homebridge-plugin-nature-remo-multifunction-light",
   "version": "1.0.0",
   "description": "Support multifunction light via nature remo",
   "license": "Apache-2.0",
