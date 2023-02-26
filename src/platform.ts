@@ -35,7 +35,7 @@ interface LightbulbState {
   colorTemperature: number
 }
 
-function signal2Id(signal: Signal, config: LightbulbState): string | undefined {
+function signal2Id(signal: Signal, config: PlatformConfig): string | undefined {
   switch (signal) {
     case 'on/off':
       return config.signalOnOff
@@ -286,22 +286,19 @@ export class NatureRemoMultifunctionLightHomebridgePlatform implements DynamicPl
     if (this.brightnessTask) {
       return;
     }
-    this.brightnessTask = (async (resolve, reject) => {
+    this.brightnessTask = (async () => {
       try {
         await sleep(1);
         if (this.targetBrightnessLevel == this.state.brightnessLevel) {
           this.brightnessTask = undefined
-          this.updateAccessories()
-          resolve()
         } else {
           await this.nextBrightnessLevel();
           await sleep(SIGNAL_INTERVAL);
           this.brightnessTask = undefined
           this.startBrightnessTaskIfNeeded()
-          resolve();
         }
       } catch (e) {
-        reject(e);
+        // do nothing
       }
     })();
   }
@@ -310,22 +307,20 @@ export class NatureRemoMultifunctionLightHomebridgePlatform implements DynamicPl
     if (this.colorTemperatureTask) {
       return;
     }
-    this.colorTemperatureTask = (async (resolve, reject) => {
+    this.colorTemperatureTask = (async () => {
       try {
         await sleep(1);
         if (this.targetColorTemperatureLevel == this.state.colorTemperatureLevel) {
           this.colorTemperatureTask = undefined
           this.updateAccessories()
-          resolve()
         } else {
           await this.nextColorTemperatureLevel();
           await sleep(SIGNAL_INTERVAL);
           this.colorTemperatureTask = undefined
           this.startTemperatureTaskIfNeeded()
-          resolve();
         }
       } catch (e) {
-        reject(e);
+        // do nothing
       }
     })();
   }
