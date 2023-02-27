@@ -17,16 +17,18 @@ export default class MainSwitchAccessory {
   }
 
   async handleOnGet(): Promise<CharacteristicValue> {
-    console.log(`[UpperSwitch][Get] on: ${this.current()} ${this.platform.state.lightingPoint}`)
+    this.platform.log.info(`[UpperSwitch][Get] on: ${this.current()} ${this.platform.state.lightingPoint}`)
     return this.current()
   }
 
   async handleOnSet(value: CharacteristicValue) {
     try {
-      console.log(`[UpperSwitch][Set] on: ${value}`)
+      this.platform.log.info(`[UpperSwitch][Set] on: ${value}`)
       await this.platform.handleUpperOnSet(value)
     } catch (e) {
-      console.error(`[UpperSwitch][Set] on: ${value}. ${e}`)
+      if (e instanceof Error) {
+        this.platform.log.error(`${e.message}`)
+      }
     }
   }
 
@@ -45,7 +47,7 @@ export default class MainSwitchAccessory {
   }
 
   update() {
-    console.log(`[UpperSwitch][Update] on: ${this.current()}`)
+    this.platform.log.info(`[UpperSwitch][Update] on: ${this.current()}`)
     this.service.updateCharacteristic(
       this.platform.Characteristic.On,
       this.current()

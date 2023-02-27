@@ -23,62 +23,68 @@ export default class LightbulbPlatformAccessory {
   }
 
   async handleOnGet(): Promise<CharacteristicValue> {
-    console.log(`[Lightbulb][Get] on: ${this.platform.state.on}`);
+    this.platform.log.info(`[Lightbulb][Get] on: ${this.platform.state.on}`);
     return this.platform.state.on;
   }
 
   async handleOnSet(value: CharacteristicValue) {
     try {
-      console.log(`[Lightbulb][Set] on: ${value}`);
+      this.platform.log.info(`[Lightbulb][Set] on: ${value}`);
       await this.platform.handleLightbulbOnSet(value);
     } catch (e) {
-      console.error(`[Lightbulb][Set] on: ${value}. ${e}`)
+      if (e instanceof Error) {
+        this.platform.log.error(`[UpperSwitch][Set] on: ${value}. ${e.message}`)
+      }
     }
   }
 
   async handleBrightnessGet(): Promise<CharacteristicValue> {
-    console.log(`[Lightbulb][Get] brightness ${this.platform.state.brightness}`);
+    this.platform.log.info(`[Lightbulb][Get] brightness ${this.platform.state.brightness}`);
     return this.platform.state.brightness;
   }
 
   async handleBrightnessSet(value: CharacteristicValue) {
     try {
-      console.log(`[Lightbulb][Set] brightness: ${value}`);
+      this.platform.log.info(`[Lightbulb][Set] brightness: ${value}`);
       await this.platform.handleBrightnessSet(value);
     } catch (e) {
-      console.error(`[Lightbulb][Set] brightness: ${value}. ${e}`)
+      if (e instanceof Error) {
+        this.platform.log.error(`[UpperSwitch][Set] on: ${value}. ${e.message}`)
+      }
     }
   }
 
   async handleColorTemperatureGet(): Promise<CharacteristicValue> {
-    console.log(`[Lightbulb][Get] temperature: ${this.platform.state.brightness}`);
+    this.platform.log.info(`[Lightbulb][Get] temperature: ${this.platform.state.brightness}`);
     return this.platform.state.colorTemperature;
   }
 
   async handleColorTemperatureSet(value: CharacteristicValue) {
     try {
-      console.log(`[Lightbulb][Set] temperature: ${value}`);
+      this.platform.log.info(`[Lightbulb][Set] temperature: ${value}`);
       await this.platform.handleColorTemperatureSet(value);
     } catch (e) {
-      console.error(`[Lightbulb][Set] temperature: ${value}. ${e}`)
+      if (e instanceof Error) {
+        this.platform.log.error(`[UpperSwitch][Set] on: ${value}. ${e.message}`)
+      }
     }
   }
 
   update() {
     const state = this.platform.state;
-    console.log(`[Lightbulb][Update] on: ${state.on} ${state.lightingPoint}`)
+    this.platform.log.info(`[Lightbulb][Update] on: ${state.on} ${state.lightingPoint}`)
     this.service.updateCharacteristic(
       this.platform.Characteristic.On,
       state.on
     );
     const brightness = Math.round(100 / 7 * state.brightnessLevel);
-    console.log(`[Lightbulb][Update] brightness ${state.brightnessDirection}: ${state.brightnessLevel}`);
+    this.platform.log.info(`[Lightbulb][Update] brightness ${state.brightnessDirection}: ${state.brightnessLevel}`);
     this.service.updateCharacteristic(
       this.platform.Characteristic.Brightness,
       brightness
     );
     const colorTemperature = 140 + 60 * (state.colorTemperatureLevel - 1);
-    console.log(`[Lightbulb][Update] colorTemperature ${state.colorTemperatureDirection}: ${state.colorTemperatureLevel}`)
+    this.platform.log.info(`[Lightbulb][Update] colorTemperature ${state.colorTemperatureDirection}: ${state.colorTemperatureLevel}`)
     this.service.updateCharacteristic(
       this.platform.Characteristic.ColorTemperature,
       colorTemperature
