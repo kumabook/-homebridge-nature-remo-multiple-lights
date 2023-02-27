@@ -291,6 +291,7 @@ export class NatureRemoMultifunctionLightHomebridgePlatform implements DynamicPl
         await sleep(1);
         if (this.targetBrightnessLevel == this.state.brightnessLevel) {
           this.brightnessTask = undefined
+          this.updateAccessories()
         } else {
           await this.nextBrightnessLevel();
           await sleep(SIGNAL_INTERVAL);
@@ -298,7 +299,10 @@ export class NatureRemoMultifunctionLightHomebridgePlatform implements DynamicPl
           this.startBrightnessTaskIfNeeded()
         }
       } catch (e) {
-        // do nothing
+        if (e instanceof Error) {
+          this.log.error(e.message);
+        }
+        this.brightnessTask = undefined
       }
     })();
   }
@@ -320,7 +324,10 @@ export class NatureRemoMultifunctionLightHomebridgePlatform implements DynamicPl
           this.startTemperatureTaskIfNeeded()
         }
       } catch (e) {
-        // do nothing
+        if (e instanceof Error) {
+          this.log.error(e.message);
+        }
+        this.brightnessTask = undefined
       }
     })();
   }
