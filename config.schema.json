@@ -10,6 +10,18 @@
         "type": "string",
         "default": "Nature Remo Multifunction Light",
         "required": true
+       },
+      "apiMode": {
+        "title": "API Mode",
+        "type": "string",
+        "required": true,
+        "default": "local"
+      },
+      "signalInterval": {
+        "title": "Signal Interval",
+        "type": "number",
+        "required": true,
+        "default": 500
       },
       "accessToken": {
         "title": "Access token",
@@ -35,6 +47,12 @@
         "title": "Signal for Brightness",
         "type": "string",
         "required": true
+      },
+      "localBaseURL": {
+        "title": "Nature Remo Local api base url",
+        "type": "string",
+        "required": true,
+        "default": "http://remo-19c31c.local"
       }
     }
   }
