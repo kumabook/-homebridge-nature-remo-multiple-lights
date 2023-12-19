@@ -60,7 +60,7 @@ function signal2message(signal: Signal): NatureRemoMessage | undefined {
       return {
         format: "us",
         freq: 39,
-        data: [3205,1772,290,1348,305,1349,305,1348,304,525,290,1347,305,1349,307,1347,305,524,291,1363,291,1363,292,1345,307,524,290,507,307,510,304,524,290,524,380,418,305,524,290,510,305,524,290,1363,293,507,307,522,290,509,305,508,392,437,291,1362,290,510,305,1349,305,1364,290,1364,288,1363,291,1363,293,1345,309,522,291,1348,305,507,307,522,290,509,306,524,290,6123,3191,1753,309,1344,333,1321,308,1346,309,520,292,1361,290,1365,290,1363,323,464,316,1350,307,1346,305,1348,308,504,307,510,333,496,290,524,290,507,307,524,290,508,307,524,288,509,333,1320,307,524,290,507,307,509,305,507,309,522,290,1362,290,509,305,1349,306,1348,307,1347,305,1364,291,1363,290,1362,314,485,305,1349,367,462,289,509,307,522,339,448,316,6108,3207,1753,305,1349,305,1349,307,1347,307,504,310,1361,292,1345,309,1345,307,522,292,1362,290,1364,290,1363,291,509,305,524,292,508,307,505,309,507,305,507,307,522,293,507,358,471,291,1361,372,415,316,524,293,507,305,524,327,460,316,1364,290,507,308,1346,307,1348,306,1347,305,1349,305,1364,291,1363,291,506,307,1347,308,523,367,430,307,523,292,507,308]
+        data: [3265,1696,364,1290,366,1287,364,1290,362,450,364,1289,364,1290,366,1287,367,449,363,1291,364,1290,362,1306,349,449,363,448,366,450,365,448,363,452,362,450,364,453,361,451,364,452,364,1289,362,450,366,450,364,448,366,1287,367,449,365,447,366,451,362,1291,364,1290,364,1289,362,1287,367,449,365,1289,364,1289,364,1289,365,451,365,447,365,451,364,448,366,6045,3263,1698,364,1291,364,1285,366,1288,366,451,364,1286,367,1305,348,1288,364,452,364,1286,366,1287,366,1287,369,447,367,446,366,450,364,448,364,452,362,450,365,452,362,450,366,446,368,1286,366,450,364,448,364,453,364,1285,369,448,364,448,366,450,364,1286,366,1288,368,1286,366,1287,397,408,375,1286,368,1286,366,1287,366,451,364,448,366,450,364,448,397,6005,3301,1666,394,1259,390,1265,394,1251,371,448,368,1286,366,1287,368,1287,367,445,368,1286,369,1285,368,1286,368,444,369,448,396,408,398,422,368,448,366,446,369,448,396,408,398,422,399,1247,398,424,368,443,371,446,399,1247,397,422,393,419,395,421,390,1264,394,1258,392,1261,400,1247,376,446,390,1263,397,1248,397,1263,391,421,393,420,394,422,393,420,370]
       };
     case 'point':
       return {
@@ -189,6 +189,7 @@ export class NatureRemoMultifunctionLightHomebridgePlatform implements DynamicPl
   requestSignal(signal: Signal) {
     switch (this.config.apiMode) {
       case 'local':
+        this.log.info("------------------ " + signal)
         const message = signal2message(signal)
         return axios.post('/messages', message, {
           baseURL: this.config.localBaseURL,
@@ -227,6 +228,7 @@ export class NatureRemoMultifunctionLightHomebridgePlatform implements DynamicPl
     if (this.state.on === value) {
       return
     }
+    this.log.info("--------------handleLightbulbonset--------")
     await this.requestSignal('on/off')
     this.state.on = value as boolean;
     this.updateAccessories()
@@ -311,6 +313,16 @@ export class NatureRemoMultifunctionLightHomebridgePlatform implements DynamicPl
 
   async handleBrightnessSet(value: CharacteristicValue) {
     const v = value as number;
+    if (v == 0) {
+      if (this.state.on) {
+        await this.requestSignal('on/off')
+        this.updateAccessories();
+        return;
+      } else {
+        this.updateAccessories();
+        return;
+      }
+    }
     this.state.brightness = v;
 
 //    this.nextBrightnessLevel()
@@ -321,6 +333,10 @@ export class NatureRemoMultifunctionLightHomebridgePlatform implements DynamicPl
 
   async handleColorTemperatureSet(value: CharacteristicValue) {
     const v = value as number;
+    if (!this.state.on) {
+      this.updateAccessories();
+      return;
+    }
     this.state.colorTemperature = v;
 
     //this.nextColorTemperatureLevel();
